@@ -49,9 +49,9 @@ class NeuralNetwork_Backpropagation:
                 self.t_plot = np.append(self.t_plot,t)
                 error = np.append(error,(t-a2))
                 S2 = -2 * error[-1]
-                temp1 = a1[0]*(1-a1[0])
-                temp2 = a1[1]*(1-a1[1])
-                fn1 = np.array([temp1[0],0,0,temp2[0]]).reshape(2,2)
+                temp = [element for row in a1 for element in row]
+                temp1 = [i*(1-i) for i in temp]
+                fn1 = np.diag(temp1)
                 S1 = np.dot(fn1,self.w2.T)*S2
                 self.w2 = self.w2 - alpha*np.dot(S2,a1.T)
                 self.b2 = self.b2 - alpha*S2
@@ -85,16 +85,26 @@ class NeuralNetwork_Backpropagation:
 
     def NetworkOutput_Vs_Targets(self):
         x_tick = np.arange(len(self.t_plot)-100, len(self.t_plot))
+        x_tick1 = np.arange(100)
         series1 = pd.Series(self.a[-100:], index=x_tick)
         series2 = pd.Series(self.t_plot[-100:], index=x_tick)
-        fig, ax = plt.subplots()
-        ax.plot(x_tick, series1, label='Network Outputs')
-        ax.plot(x_tick, series2, label='Actual Targets')
-        ax.set_title("Network Output vs Targets")
-        ax.set_xlabel("Sample Count")
-        ax.set_ylabel("Outputs")
-        plt.grid()
-        plt.legend()
+        series3 = pd.Series(self.a[:100], index=x_tick)
+        series4 = pd.Series(self.t_plot[:100], index=x_tick)
+        fig, ax = plt.subplots(2,1,figsize=(16,8))
+        ax[0].plot(x_tick1, series3, label='Network Outputs')
+        ax[0].plot(x_tick1, series4, label='Actual Targets')
+        ax[0].set_title("Network Output vs Targets - First 100 Samples")
+        ax[0].set_xlabel("Sample Count")
+        ax[0].set_ylabel("Outputs")
+        ax[0].grid()
+        ax[0].legend()
+        ax[1].plot(x_tick, series1, label='Network Outputs')
+        ax[1].plot(x_tick, series2, label='Actual Targets')
+        ax[1].set_title("Network Output vs Targets - Last 100 Samples")
+        ax[1].set_xlabel("Sample Count")
+        ax[1].set_ylabel("Outputs")
+        ax[1].grid()
+        ax[1].legend()
         plt.tight_layout()
         plt.show()
 
@@ -103,7 +113,7 @@ p = np.linspace(-2,2,100)
 g = np.exp(-np.abs(p))*np.sin(np.pi*p)
 
 # Testing the neural network
-network = NeuralNetwork_Backpropagation(2)
+network = NeuralNetwork_Backpropagation(9)
 network.train(p,g)
 network.SSE_Epoch()
 network.prediction(p)
