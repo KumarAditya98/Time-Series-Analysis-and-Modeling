@@ -64,5 +64,6 @@ ma = np.r_[1,num]
 arma_process = sm.tsa.ArmaProcess(ar,ma)
 arma_process.isstationary
 
-y = arma_process.generate_sample(1000, scale = 1 + 0) # scale = variance, 0 = mean
+mean_e = 0
+y = arma_process.generate_sample(1000, scale = 1) + mean_e # scale = variance, 0 = mean
 # GPAC we're going to use the last sampling method
