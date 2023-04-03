@@ -108,6 +108,15 @@ class NeuralNetwork_Backpropagation:
         plt.tight_layout()
         plt.show()
 
+    def NN_Function_Approximation(self,p,g):
+        a = self.prediction(p)
+        fig, ax = plt.subplots(figsize=(16, 8))
+        ax.plot(pd.Series(g), label="Actual Function")
+        ax.plot(pd.Series(a), label="Function Approximation")
+        plt.legend()
+        plt.grid()
+        plt.show()
+
 # Generating a synthetic function
 p = np.linspace(-2,2,100)
 g = np.exp(-np.abs(p))*np.sin(np.pi*p)
@@ -117,12 +126,6 @@ network = NeuralNetwork_Backpropagation(10)
 network.train(p,g,0.2,1000)
 network.SSE_Epoch()
 network.prediction(p)
-network.NetworkOutput_Vs_Targets()
+network.NN_Function_Approximation(p,g)
 
 
-fig, ax = plt.subplots(figsize=(16,8))
-ax.plot((pd.Series(g)),label="Actual Function")
-ax.plot(pd.Series(network.prediction(p)),label="Function Approximation")
-plt.legend()
-plt.grid()
-plt.show()
