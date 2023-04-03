@@ -126,6 +126,7 @@ network = NeuralNetwork_Backpropagation(10)
 network.train(p,g,0.2,1000)
 network.SSE_Epoch()
 network.prediction(p)
+network.NetworkOutput_Vs_Targets()
 network.NN_Function_Approximation(p,g)
 
 
