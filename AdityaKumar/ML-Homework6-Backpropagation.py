@@ -4,29 +4,107 @@ import matplotlib.pyplot as plt
 
 class NeuralNetwork_Backpropagation:
     """
-    A neural network with 1 - S^1 - 1 architecture
+    A neural network with 1 - S - 1 architecture
     Default: Sigmoid function in Hidden Layer and Linear function in output layer
     """
-    def __init__(self,neurons,learning_rate,seed=):
-        self.S1 = neurons
-        self.alpha = learning_rate
+    def __init__(self,neurons,seed=6202):
+        self.neurons = neurons
         self.seed = seed
+        self.a = np.array([])
+        self.t_plot = np.array([])
+        self.epoch_error = np.array([])
         np.random.seed(self.seed)
-        self.w1 = np.random.uniform(low=-0.5,high=0.5,size=(self.S1,1))
-        self.b1 = np.random.uniform(-0.5,0.5,(self.S1,1))
-        self.w2 = np.random.uniform(-0.5,0.5,(self.S1,1))
+        self.w1 = np.random.uniform(low=-0.5,high=0.5,size=(self.neurons,1))
+        self.b1 = np.random.uniform(-0.5,0.5,(self.neurons,1))
+        self.w2 = np.random.uniform(-0.5,0.5,(1,self.neurons))
         self.b2 = np.random.uniform(-0.5,0.5,(1,1))
 
     def sigmoid(self,x):
-        return 1 / (1+np.exp(-x))
+        sample = []
+        for i in range(len(x)):
+            sample.append(1 / (1 + np.exp(-x[i])))
+        final = np.array(sample).reshape(len(x), 1)
+        return final
 
     def deriv_sigmoid(self,x):
         fx = self.sigmoid(x)
         return (1-fx)*fx
 
-    def feedforward(self,p):
-        n1 = np.dot(self.w1,p) + self.b1
-        a1 = self.sigmoid(n1)
-        a2 = np.dot(self.w2,a1) + self.b2
-        return a2
+    def train(self,train_data,target,learning_rate=0.1,epochs=1000):
+        alpha = learning_rate
+        epochs = epochs
+        self.a = np.array([])
+        self.t_plot = np.array([])
+        self.epoch_error = np.array([])
+        for epochs in range(epochs):
+            error = np.array([])
+            zipped = list(zip(train_data,target))
+            np.random.shuffle(zipped)
+            input, output = zip(*zipped)
+            for p,t in zip(input,output):
+                n1 = np.dot(self.w1, p) + self.b1
+                a1 = self.sigmoid(n1)
+                a2 = np.dot(self.w2, a1) + self.b2
+                self.a = np.append(self.a,a2)
+                self.t_plot = np.append(self.t_plot,t)
+                error = np.append(error,(t-a2))
+                S2 = -2 * error[-1]
+                temp1 = a1[0]*(1-a1[0])
+                temp2 = a1[1]*(1-a1[1])
+                fn1 = np.array([temp1[0],0,0,temp2[0]]).reshape(2,2)
+                S1 = np.dot(fn1,self.w2.T)*S2
+                self.w2 = self.w2 - alpha*np.dot(S2,a1.T)
+                self.b2 = self.b2 - alpha*S2
+                self.w1 = self.w1 - alpha*np.dot(S1,p)
+                self.b1 = self.b1 - alpha*S1
+            self.epoch_error = np.append(self.epoch_error,np.sum(error**2))
 
+    def prediction(self,input):
+        output = np.array([])
+        for i in input:
+            n1 = np.dot(self.w1, i) + self.b1
+            a1 = self.sigmoid(n1)
+            a2 = np.dot(self.w2, a1) + self.b2
+            output = np.append(output,a2)
+        return output
+
+    def SSE_Epoch(self):
+        x_tick = np.arange(0, len(self.epoch_error))
+        series = pd.Series(self.epoch_error, index=x_tick)
+        fig, ax = plt.subplots()
+        ax.plot(x_tick, series, label='Sum Squared Error')
+        ax.set_title("SSE Error Plot")
+        ax.set_xlabel("Log Scale for SSE Error")
+        ax.set_ylabel("Log Scale for Epochs")
+        plt.xscale("log")
+        plt.yscale("log")
+        plt.grid()
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+    def NetworkOutput_Vs_Targets(self):
+        x_tick = np.arange(len(self.t_plot)-100, len(self.t_plot))
+        series1 = pd.Series(self.a[-100:], index=x_tick)
+        series2 = pd.Series(self.t_plot[-100:], index=x_tick)
+        fig, ax = plt.subplots()
+        ax.plot(x_tick, series1, label='Network Outputs')
+        ax.plot(x_tick, series2, label='Actual Targets')
+        ax.set_title("Network Output vs Targets")
+        ax.set_xlabel("Sample Count")
+        ax.set_ylabel("Outputs")
+        plt.grid()
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+# Generating a synthetic function
+p = np.linspace(-2,2,100)
+g = np.exp(-np.abs(p))*np.sin(np.pi*p)
+
+# Testing the neural network
+network = NeuralNetwork_Backpropagation(2)
+network.train(p,g)
+network.SSE_Epoch()
+network.prediction(p)
+network.NetworkOutput_Vs_Targets()
