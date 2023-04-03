@@ -26,10 +26,6 @@ class NeuralNetwork_Backpropagation:
         final = np.array(sample).reshape(len(x), 1)
         return final
 
-    def deriv_sigmoid(self,x):
-        fx = self.sigmoid(x)
-        return (1-fx)*fx
-
     def train(self,train_data,target,learning_rate=0.1,epochs=1000):
         alpha = learning_rate
         epochs = epochs
