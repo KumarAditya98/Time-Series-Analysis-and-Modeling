@@ -71,7 +71,7 @@ class NeuralNetwork_Backpropagation:
     def SSE_Epoch(self):
         x_tick = np.arange(0, len(self.epoch_error))
         series = pd.Series(self.epoch_error, index=x_tick)
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(16,8))
         ax.plot(x_tick, series, label='Sum Squared Error')
         ax.set_title("SSE Error Plot")
         ax.set_xlabel("Log Scale for SSE Error")
@@ -113,8 +113,16 @@ p = np.linspace(-2,2,100)
 g = np.exp(-np.abs(p))*np.sin(np.pi*p)
 
 # Testing the neural network
-network = NeuralNetwork_Backpropagation(9)
-network.train(p,g)
+network = NeuralNetwork_Backpropagation(10)
+network.train(p,g,0.2,1000)
 network.SSE_Epoch()
 network.prediction(p)
 network.NetworkOutput_Vs_Targets()
+
+
+fig, ax = plt.subplots(figsize=(16,8))
+ax.plot((pd.Series(g)),label="Actual Function")
+ax.plot(pd.Series(network.prediction(p)),label="Function Approximation")
+plt.legend()
+plt.grid()
+plt.show()
