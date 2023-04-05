@@ -58,12 +58,43 @@ print(tabulate(table,headers='firstrow', tablefmt = 'fancy_grid'))
 lag1 = 20
 lag2 = 40
 lag3 = 80
-cal_autocorr(y1_ar,lag1,"AR(2)")
+
+# For 20 lags
+y_ar1 = [y1_ar, y2_ar, y3_ar]
+y_ar1_title = ['AR(2) - 100 samples','AR(2) - 1000 samples','AR(2) - 10,000 samples']
+
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ar1[count],lag1,y_ar1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('AR(2) for 20 Lags',size=16)
 plt.show()
-cal_autocorr(y1_ar,lag2,"AR(2)")
+
+# For 40 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ar1[count],lag2,y_ar1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('AR(2) for 40 Lags',size=16)
 plt.show()
-cal_autocorr(y1_ar,lag3,"AR(2)")
+
+# For 80 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ar1[count],lag3,y_ar1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('AR(2) for 80 Lags',size=16)
 plt.show()
+
 
 # Q2: MA(2)
 # 𝑦(𝑡)=𝑒(𝑡)+0.1𝑒(𝑡−1)+0.4𝑒(𝑡−2)
@@ -103,13 +134,42 @@ print(tabulate(table,headers='firstrow', tablefmt = 'fancy_grid'))
 lag1 = 20
 lag2 = 40
 lag3 = 80
-cal_autocorr(y1_ma,lag1,"MA(2)")
-plt.show()
-cal_autocorr(y1_ma,lag2,"MA(2)")
-plt.show()
-cal_autocorr(y1_ma,lag3,"MA(2)")
+
+# For 20 lags
+y_ma1 = [y1_ma, y2_ma, y3_ma]
+y_ma1_title = ['MA(2) - 100 samples','MA(2) - 1000 samples','MA(2) - 10,000 samples']
+
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ma1[count],lag1,y_ma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('MA(2) for 20 Lags',size=16)
 plt.show()
 
+# For 40 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ma1[count],lag2,y_ma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('MA(2) for 40 Lags',size=16)
+plt.show()
+
+# For 80 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_ma1[count],lag3,y_ma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('MA(2) for 80 Lags',size=16)
+plt.show()
 
 # Q3: ARMA(2,2)
 # 𝑦(𝑡)−0.5𝑦(𝑡−1)−0.2𝑦(𝑡−2)=𝑒(𝑡)+0.1𝑒(𝑡−1)+0.4𝑒(𝑡−2)
@@ -147,9 +207,38 @@ print(tabulate(table,headers='firstrow', tablefmt = 'fancy_grid'))
 lag1 = 20
 lag2 = 40
 lag3 = 80
-cal_autocorr(y1_arma,lag1,"ARMA(2,2)")
+
+y_arma1 = [y1_arma, y2_arma, y3_arma]
+y_arma1_title = ['ARMA(2,2) - 100 samples','ARMA(2,2) - 1000 samples','ARMA(2,2) - 10,000 samples']
+
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_arma1[count],lag1,y_arma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('ARMA(2,2) for 20 Lags',size=16)
 plt.show()
-cal_autocorr(y1_arma,lag2,"ARMA(2,2)")
+
+# For 40 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_arma1[count],lag2,y_arma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('ARMA(2,2) for 40 Lags',size=16)
 plt.show()
-cal_autocorr(y1_arma,lag3,"ARMA(2,2)")
+
+# For 80 lags
+fig, axs = plt.subplots(3,1,figsize=(16,8))
+count = 0
+for i in range(3):
+        cal_autocorr(y_arma1[count],lag3,y_arma1_title[count],ax=axs[i])
+        count+=1
+fig.tight_layout()
+fig.subplots_adjust(top=0.88)
+fig.suptitle('ARMA(2,2) for 80 Lags',size=16)
 plt.show()
