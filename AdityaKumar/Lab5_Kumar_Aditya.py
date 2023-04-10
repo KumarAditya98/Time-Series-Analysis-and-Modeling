@@ -87,4 +87,4 @@ def Cal_GPAC(ry,j=7,k=7):
 # ry1 = [13/12,-7/24,7/(24*2),-7/(24*4),7/(24*8),-7/(24*16)]
 # ryy = ry1[::-1]
 # ry = np.concatenate((ryy,ry1[1:]))
-Cal_GPAC(ry,2,4)
+Cal_GPAC(ry,7,7)
