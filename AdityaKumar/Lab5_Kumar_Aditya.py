@@ -16,7 +16,7 @@ def ARMA_process():
     if ar_order == 0 and ma_order == 0:
         print("This is just a white noise. Run program again.")
         return None
-    print('Enter the respective coefficients in the form:\n[y(t) + a1.y(t-1)) + a2.y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
+    print('Enter the respective coefficients in the form:\n[y(t) = a1.y(t-1)) + a2.y(t-2) + ... + e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
     ar_coeff = []
     for i in range(ar_order):
         prompt = "Enter the coefficient for a" + str((i+1))
@@ -30,6 +30,8 @@ def ARMA_process():
     arma_process = sm.tsa.ArmaProcess(ar, ma)
     y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_e
     return arma_process, y
+
+## Add a condition to check if process is stationary and generate acf using other method if not stationary.
 
 process, samples = ARMA_process()
 lags = 60
