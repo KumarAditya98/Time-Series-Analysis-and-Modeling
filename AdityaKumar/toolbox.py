@@ -147,7 +147,7 @@ def ARMA_process():
     arma_process = sm.tsa.ArmaProcess(ar, ma)
     mean_y = mean_e*(1+np.sum(ma_coeff))/(1+np.sum(ar_coeff))
     y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_y
-    lags = 60
+    lags = int(input("Enter number of lags required for the ACF generation:"))
     if arma_process.isstationary:
         print('Process with given coefficients is Stationary.')
         ry = arma_process.acf(lags=lags)
