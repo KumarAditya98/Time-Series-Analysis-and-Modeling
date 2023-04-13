@@ -183,10 +183,7 @@ def Cal_GPAC(ry,j=7,k=7):
                 temp1 = np.array(temp)
                 num[:,-1] = temp1
                 num_det = np.linalg.det(num)
-                if den_det < 0.0001:
-                    col.append(np.inf)
-                else:
-                    col.append(np.divide(num_det,den_det))
+                col.append(np.divide(num_det,den_det))
         col = np.array(col)
         matrix[:,i] = col
     np.set_printoptions(precision=3,floatmode='fixed')
