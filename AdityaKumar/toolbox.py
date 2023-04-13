@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
+import statsmodels.api as sm
+import seaborn as sns
+from statsmodels.graphics.tsaplots import plot_acf , plot_pacf
 
 def Cal_rolling_mean_var(x):
     rMean = []
@@ -155,8 +158,65 @@ def ARMA_process():
     Ry = np.concatenate((ryy, ry[1:]))
     return y, Ry
 
+def Cal_GPAC(ry,j=7,k=7):
+    matrix = np.empty((j,k))
+    mid_point = int(len(ry)/2)
+    for i in range(k):
+        col = []
+        for l in range(j):
+            if i == 0:
+                col.append(round(float(ry[mid_point+l+1]/ry[mid_point+l]),3))
+            else:
+                den = np.empty((i+1,i+1))
+                for b in range(i+1):
+                    temp = []
+                    for a in range(mid_point + l - i + b, mid_point+b+l+1):
+                        temp.append(ry[a])
+                    temp1 = np.array(temp)
+                    den[:,b] = temp1
+                Denn = den[:,::-1]
+                den_det = np.linalg.det(Denn)
+                num = np.empty((i+1,i+1))
+                for b in range(1,i+1):
+                    temp = []
+                    for a in range(mid_point - i +b +l,mid_point+b+l+1):
+                        temp.append(ry[a])
+                    temp1 = np.array(temp)
+                    num[:,b] = temp1
+                temp = []
+                for c in range(i+1):
+                    temp.append(ry[mid_point+l+1+c])
+                temp1 = np.array(temp)
+                num[:,0] = temp1
+                Numm = num[:, ::-1]
+                num_det = np.linalg.det(Numm)
+                col.append(round(float(num_det/den_det),3))
+        col = np.array(col)
+        matrix[:,i] = col
+    np.set_printoptions(precision=3,floatmode='fixed')
+    fig, ax = plt.subplots(figsize = (12,8))
+    sns.heatmap(matrix,annot=True,cmap='coolwarm',ax=ax,fmt='.3f',xticklabels=list(range(1,k+1)),yticklabels=list(range(j)),annot_kws={"size": 30 / np.sqrt(len(matrix)),"fontweight":'bold'})
+    ax.tick_params(labelsize=30 / np.sqrt(len(matrix)))
+    cbar = ax.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=30 / np.sqrt(len(matrix)),width=2)
+    fig.subplots_adjust(top=0.88)
+    fig.suptitle('Generalized Partial Autocorrelation (GPAC) Table',fontweight='bold',size=24)
+    plt.xticks(weight='bold')
+    plt.yticks(weight='bold')
+    plt.show()
+    print(matrix)
 
-
+def ACF_PACF_Plot(y,lags):
+    acf = sm.tsa.stattools.acf(y, nlags=lags)
+    pacf = sm.tsa.stattools.pacf(y, nlags=lags)
+    fig = plt.figure(figsize=(16,8))
+    plt.subplot(211)
+    plt.title('ACF/PACF of the raw data')
+    plot_acf(y, ax=plt.gca(), lags=lags)
+    plt.subplot(212)
+    plot_pacf(y, ax=plt.gca(), lags=lags)
+    fig.tight_layout(pad=3)
+    plt.show()
 
 
 
