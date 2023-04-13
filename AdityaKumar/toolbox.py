@@ -190,8 +190,8 @@ def Cal_GPAC(ry,j=7,k=7):
     fig, ax = plt.subplots(figsize = (12,8))
     sns.heatmap(matrix,annot=True,cmap='coolwarm',ax=ax,fmt='.3f',xticklabels=list(range(1,k+1)),yticklabels=list(range(j)),annot_kws={"size": 30 / np.sqrt(len(matrix)),"fontweight":'bold'},vmin=np.min(matrix),vmax=np.max(matrix))
     ax.tick_params(labelsize=30 / np.sqrt(len(matrix)))
-    cbar = ax.collections[0].colorbar
-    cbar.ax.tick_params(labelsize=30 / np.sqrt(len(matrix)),width=2)
+    # cbar = ax.collections[0].colorbar
+    # cbar.ax.tick_params(labelsize=30 / np.sqrt(len(matrix)),width=2)
     fig.subplots_adjust(top=0.88)
     fig.suptitle('Generalized Partial Autocorrelation (GPAC) Table',fontweight='bold',size=24)
     plt.xticks(weight='bold')
