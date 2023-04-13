@@ -129,7 +129,7 @@ def ARMA_process():
     mean_e = int(input("Enter the mean of white noise:"))
     var_e = int(input("Enter the variance of white noise:"))
     ar_order = int(input("Enter the AR portion order:"))
-    ma_order = int(input("Enter the MA portion order:"))
+    ma_order = int(input("Enter the MA portion order:\n"))
     if ar_order == 0 and ma_order == 0:
         print("This is just a white noise. Run program again.")
         return None
