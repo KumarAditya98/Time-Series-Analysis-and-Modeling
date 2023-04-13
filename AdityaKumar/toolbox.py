@@ -196,7 +196,7 @@ def Cal_GPAC(ry,j=7,k=7):
     # cbar = ax.collections[0].colorbar
     # cbar.ax.tick_params(labelsize=30 / np.sqrt(len(matrix)),width=2)
     fig.subplots_adjust(top=0.88)
-    fig.suptitle('Generalized Partial Autocorrelation (GPAC) Table',fontweight='bold',size=24)
+    #fig.suptitle('Generalized Partial Autocorrelation (GPAC) Table',fontweight='bold',size=24)
     plt.xticks(weight='bold')
     plt.yticks(weight='bold')
     plt.show()
