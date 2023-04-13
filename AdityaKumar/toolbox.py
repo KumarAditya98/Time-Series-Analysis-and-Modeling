@@ -133,7 +133,8 @@ def ARMA_process():
     if ar_order == 0 and ma_order == 0:
         print("This is just a white noise. Run program again.")
         return None
-    print('\nEnter the respective coefficients in the form:\n[y(t) + a1*y(t-1)) + a2*y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
+    print("\n")
+    print('Enter the respective coefficients in the form:\n[y(t) + a1*y(t-1)) + a2*y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
     ar_coeff = []
     for i in range(ar_order):
         prompt = "Enter the coefficient for a" + str((i+1))
