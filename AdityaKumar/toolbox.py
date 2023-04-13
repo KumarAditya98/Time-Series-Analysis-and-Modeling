@@ -187,7 +187,7 @@ def Cal_GPAC(ry,j=7,k=7):
         col = np.array(col)
         matrix[:,i] = col
     fig, ax = plt.subplots(figsize = (12,8))
-    sns.heatmap(matrix,annot=True,cmap='coolwarm',ax=ax,fmt='.3f',xticklabels=list(range(1,k+1)),yticklabels=list(range(j)),annot_kws={"size": 30 / np.sqrt(len(matrix)),"fontweight":'bold'},vmin=np.min(matrix),vmax=np.max(matrix))
+    sns.heatmap(matrix,annot=True,cmap='coolwarm',ax=ax,fmt='.3f',xticklabels=list(range(1,k+1)),yticklabels=list(range(j)),annot_kws={"size": 30 / np.sqrt(len(matrix)),"fontweight":'bold'},robust=True)
     ax.tick_params(labelsize=30 / np.sqrt(len(matrix)))
     cbar = ax.collections[0].colorbar
     cbar.ax.tick_params(labelsize=30 / np.sqrt(len(matrix)),width=2)
