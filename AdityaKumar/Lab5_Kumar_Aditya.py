@@ -9,5 +9,4 @@ from toolbox import ARMA_process, Cal_GPAC, ACF_PACF_Plot
 
 y, ry = ARMA_process()
 Cal_GPAC(ry,7,7)
-
 ACF_PACF_Plot(y,60)
