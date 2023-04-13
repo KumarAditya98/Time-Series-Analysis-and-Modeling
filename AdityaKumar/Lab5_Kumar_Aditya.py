@@ -83,9 +83,24 @@ from toolbox import ARMA_process, Cal_GPAC, ACF_PACF_Plot
 #     print(matrix)
 
 
-# Q2. 𝑦(𝑡)−0.5𝑦(𝑡−1)=𝑒(𝑡) where e(t) ~ WN(1,2)
-y_q2, ry_q2 = ARMA_process()
+# Q2. and Q3. 𝑦(𝑡)−0.5𝑦(𝑡−1)=𝑒(𝑡) where e(t) ~ WN(1,2)
+y1, ry1 = ARMA_process()
 
-# Q3.
-Cal_GPAC(ry,7,7)
-ACF_PACF_Plot(y,60)
+# Q4.
+Cal_GPAC(ry1)
+
+# Q5.
+ACF_PACF_Plot(y1,20)
+
+# Q6.
+# 5000 Samples
+# Example 2: ARMA (0,1): y(t) = e(t) + 0.5e(t 1)
+y2, ry2 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry2)
+
+# Q5.
+ACF_PACF_Plot(y2,20)
+#
+
