@@ -190,7 +190,7 @@ def Cal_GPAC(ry,j=7,k=7):
                 num[:,0] = temp1
                 Numm = num[:, ::-1]
                 num_det = np.linalg.det(Numm)
-                col.append(round(float(num_det/den_det),3))
+                col.append(np.divide(num_det,den_det))
         col = np.array(col)
         matrix[:,i] = col
     np.set_printoptions(precision=3,floatmode='fixed')
