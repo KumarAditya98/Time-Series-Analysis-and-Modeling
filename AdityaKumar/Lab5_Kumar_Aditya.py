@@ -102,5 +102,58 @@ Cal_GPAC(ry2)
 
 # Q5.
 ACF_PACF_Plot(y2,20)
-#
+
+# Example 3: ARMA (1,1): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1)
+y3, ry3 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry3)
+
+# Q5.
+ACF_PACF_Plot(y3,20)
+
+# Example 4: ARMA (2,0): y(t) + 0 .5y(t 1) + 0.2y(t 2) = e(t)
+y4, ry4 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry4)
+
+# Q5.
+ACF_PACF_Plot(y4,20)
+
+# Example 5: ARMA (2,1): y(t) + 0.5y(t 1) + 0.2y(t 2) = e(t) 0.5e(t 1)
+y5, ry5 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry5)
+
+# Q5.
+ACF_PACF_Plot(y5,20)
+
+# Example 6: ARMA (1,2): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1) 0.4e(t 2)
+y6, ry6 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry6)
+
+# Q5.
+ACF_PACF_Plot(y6,20)
+
+# Example 7: ARMA (0,2): y(t) = e(t) + 0.5e(t 1) 0.4e(t 2)
+y7, ry7 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry7)
+
+# Q5.
+ACF_PACF_Plot(y7,20)
+
+# Example 8: ARMA (2,2): y( t)+0.5y(t 1) +0.2y(t 2) = e(t)+0.5e(t 1) 0.4e(t 2)
+y8, ry8 = ARMA_process()
+
+# Q4.
+Cal_GPAC(ry8)
+
+# Q5.
+ACF_PACF_Plot(y8,20)
 
