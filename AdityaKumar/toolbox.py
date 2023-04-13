@@ -176,21 +176,25 @@ def Cal_GPAC(ry,j=7,k=7):
                     den[:,b] = temp1
                 Denn = den[:,::-1]
                 den_det = np.linalg.det(Denn)
-                num = np.empty((i+1,i+1))
-                for b in range(1,i+1):
-                    temp = []
-                    for a in range(mid_point - i +b +l,mid_point+b+l+1):
-                        temp.append(ry[a])
-                    temp1 = np.array(temp)
-                    num[:,b] = temp1
+                num = Denn.copy()
+                # num = np.empty((i+1,i+1))
+                # for b in range(1,i+1):
+                #     temp = []
+                #     for a in range(mid_point - i +b +l,mid_point+b+l+1):
+                #         temp.append(ry[a])
+                #     temp1 = np.array(temp)
+                #     num[:,b] = temp1
                 temp = []
                 for c in range(i+1):
                     temp.append(ry[mid_point+l+1+c])
                 temp1 = np.array(temp)
-                num[:,0] = temp1
-                Numm = num[:, ::-1]
-                num_det = np.linalg.det(Numm)
-                col.append(np.divide(num_det,den_det))
+                num[:,-1] = temp1
+                # Numm = num[:, ::-1]
+                num_det = np.linalg.det(num)
+                if den_det < 0.0001:
+                    col.append(np.inf)
+                else:
+                    col.append(np.divide(num_det,den_det))
         col = np.array(col)
         matrix[:,i] = col
     np.set_printoptions(precision=3,floatmode='fixed')
