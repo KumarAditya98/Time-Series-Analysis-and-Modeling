@@ -120,7 +120,40 @@ def Cal_moving_avg(series):
         index = series[k:len(series)-k].index.values
         final = pd.Series(transform, index = index)
         return final
-
+def ARMA_process():
+    np.random.seed(6313)
+    N = int(input("Enter the number of data samples:"))
+    mean_e = int(input("Enter the mean of white noise:"))
+    var_e = int(input("Enter the variance of white noise:"))
+    ar_order = int(input("Enter the AR portion order:"))
+    ma_order = int(input("Enter the MA portion order:"))
+    if ar_order == 0 and ma_order == 0:
+        print("This is just a white noise. Run program again.")
+        return None
+    print('Enter the respective coefficients in the form:\n[y(t) + a1.y(t-1)) + a2.y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
+    ar_coeff = []
+    for i in range(ar_order):
+        prompt = "Enter the coefficient for a" + str((i+1))
+        ar_coeff.append(float(input(prompt)))
+    ma_coeff = []
+    for i in range(ma_order):
+        prompt = "Enter the coefficient for b" + str((i+1))
+        ma_coeff.append(float(input(prompt)))
+    ar = np.r_[1,ar_coeff]
+    ma = np.r_[1,ma_coeff]
+    arma_process = sm.tsa.ArmaProcess(ar, ma)
+    mean_y = mean_e*(1+np.sum(ma_coeff))/(1+np.sum(ar_coeff))
+    y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_y
+    lags = 60
+    if arma_process.isstationary:
+        print('Process with given coefficeints is Stationary.')
+        ry = arma_process.acf(lags=lags)
+    else:
+        print('Process with given coefficeints is Non-Stationary.')
+        ry = sm.tsa.stattools.acf(y, nlags=lags)
+    ryy = ry[::-1]
+    Ry = np.concatenate((ryy, ry[1:]))
+    return y, Ry
 
 
 

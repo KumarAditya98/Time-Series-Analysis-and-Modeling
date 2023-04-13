@@ -16,7 +16,7 @@ def ARMA_process():
     if ar_order == 0 and ma_order == 0:
         print("This is just a white noise. Run program again.")
         return None
-    print('Enter the respective coefficients in the form:\n[y(t) = a1.y(t-1)) + a2.y(t-2) + ... + e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
+    print('Enter the respective coefficients in the form:\n[y(t) + a1.y(t-1)) + a2.y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
     ar_coeff = []
     for i in range(ar_order):
         prompt = "Enter the coefficient for a" + str((i+1))
@@ -28,16 +28,21 @@ def ARMA_process():
     ar = np.r_[1,ar_coeff]
     ma = np.r_[1,ma_coeff]
     arma_process = sm.tsa.ArmaProcess(ar, ma)
-    y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_e
-    return arma_process, y
+    mean_y = mean_e*(1+np.sum(ma_coeff))/(1+np.sum(ar_coeff))
+    y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_y
+    lags = 60
+    if arma_process.isstationary:
+        print('Process with given coefficeints is Stationary.')
+        ry = arma_process.acf(lags=lags)
+    else:
+        print('Process with given coefficeints is Non-Stationary.')
+        ry = sm.tsa.stattools.acf(y, nlags=lags)
+    ryy = ry[::-1]
+    Ry = np.concatenate((ryy, ry[1:]))
+    return y, Ry
 
-## Add a condition to check if process is stationary and generate acf using other method if not stationary.
+y, ry = ARMA_process()
 
-process, samples = ARMA_process()
-lags = 60
-ry1 = process.acf(lags=lags)
-ryy = ry1[::-1]
-ry = np.concatenate((ryy,ry1[1:]))
 def Cal_GPAC(ry,j=7,k=7):
     matrix = np.empty((j,k))
     mid_point = int(len(ry)/2)
@@ -89,4 +94,19 @@ def Cal_GPAC(ry,j=7,k=7):
 # ry1 = [13/12,-7/24,7/(24*2),-7/(24*4),7/(24*8),-7/(24*16)]
 # ryy = ry1[::-1]
 # ry = np.concatenate((ryy,ry1[1:]))
-Cal_GPAC(ry,7,7)
+# Cal_GPAC(ry,7,7)
+
+from statsmodels.graphics.tsaplots import plot_acf , plot_pacf
+def ACF_PACF_Plot(y,lags):
+    acf = sm.tsa.stattools.acf(y, nlags=lags)
+    pacf = sm.tsa.stattools.pacf(y, nlags=lags)
+    fig = plt.figure(figsize=(16,8))
+    plt.subplot(211)
+    plt.title('ACF/PACF of the raw data')
+    plot_acf(y, ax=plt.gca(), lags=lags)
+    plt.subplot(212)
+    plot_pacf(y, ax=plt.gca(), lags=lags)
+    fig.tight_layout(pad=3)
+    plt.show()
+
+ACF_PACF_Plot(samples,60)
