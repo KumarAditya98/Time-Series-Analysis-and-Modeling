@@ -1,9 +1,6 @@
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import statsmodels.api as sm
 from toolbox import ARMA_process, Cal_GPAC, ACF_PACF_Plot
+np.set_printoptions(precision=3,floatmode='fixed')
 
 # Q1. Creating a function for process generation and GPAC
 # Created in the toolbox python supporting file. Pasted below for reference:
@@ -85,6 +82,7 @@ from toolbox import ARMA_process, Cal_GPAC, ACF_PACF_Plot
 
 # Q2. and Q3. 𝑦(𝑡)−0.5𝑦(𝑡−1)=𝑒(𝑡) where e(t) ~ WN(1,2)
 y1, ry1 = ARMA_process()
+print(np.round(ry1,3))
 
 # Q4.
 Cal_GPAC(ry1)
@@ -96,6 +94,7 @@ ACF_PACF_Plot(y1,20)
 # 5000 Samples
 # Example 2: ARMA (0,1): y(t) = e(t) + 0.5e(t 1)
 y2, ry2 = ARMA_process()
+print(np.round(ry2,3))
 
 # Q4.
 Cal_GPAC(ry2)
@@ -105,6 +104,7 @@ ACF_PACF_Plot(y2,20)
 
 # Example 3: ARMA (1,1): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1)
 y3, ry3 = ARMA_process()
+print(np.round(ry3,3))
 
 # Q4.
 Cal_GPAC(ry3)
@@ -114,6 +114,7 @@ ACF_PACF_Plot(y3,20)
 
 # Example 4: ARMA (2,0): y(t) + 0 .5y(t 1) + 0.2y(t 2) = e(t)
 y4, ry4 = ARMA_process()
+print(np.round(ry4,3))
 
 # Q4.
 Cal_GPAC(ry4)
@@ -121,8 +122,9 @@ Cal_GPAC(ry4)
 # Q5.
 ACF_PACF_Plot(y4,20)
 
-# Example 5: ARMA (2,1): y(t) + 0.5y(t 1) + 0.2y(t 2) = e(t) 0.5e(t 1)
+# Example 5: ARMA (2,1): y(t) + 0.5y(t 1) + 0.2y(t 2) = e(t) - 0.5e(t 1)
 y5, ry5 = ARMA_process()
+print(np.round(ry5,3))
 
 # Q4.
 Cal_GPAC(ry5)
@@ -130,8 +132,9 @@ Cal_GPAC(ry5)
 # Q5.
 ACF_PACF_Plot(y5,20)
 
-# Example 6: ARMA (1,2): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1) 0.4e(t 2)
+# Example 6: ARMA (1,2): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1) - 0.4e(t 2)
 y6, ry6 = ARMA_process()
+print(np.round(ry6,3))
 
 # Q4.
 Cal_GPAC(ry6)
@@ -139,8 +142,9 @@ Cal_GPAC(ry6)
 # Q5.
 ACF_PACF_Plot(y6,20)
 
-# Example 7: ARMA (0,2): y(t) = e(t) + 0.5e(t 1) 0.4e(t 2)
+# Example 7: ARMA (0,2): y(t) = e(t) + 0.5e(t 1) - 0.4e(t 2)
 y7, ry7 = ARMA_process()
+print(np.round(ry7,3))
 
 # Q4.
 Cal_GPAC(ry7)
@@ -148,8 +152,9 @@ Cal_GPAC(ry7)
 # Q5.
 ACF_PACF_Plot(y7,20)
 
-# Example 8: ARMA (2,2): y( t)+0.5y(t 1) +0.2y(t 2) = e(t)+0.5e(t 1) 0.4e(t 2)
+# Example 8: ARMA (2,2): y( t)+0.5y(t 1) +0.2y(t 2) = e(t)+0.5e(t 1) - 0.4e(t 2)
 y8, ry8 = ARMA_process()
+print(np.round(ry8,3))
 
 # Q4.
 Cal_GPAC(ry8)
