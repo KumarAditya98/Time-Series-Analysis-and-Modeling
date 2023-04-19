@@ -58,7 +58,7 @@ def lm_param_estimate(y,na,nb):
     epsilon = 0.001
     iter = 0
     while iter < max_iter:
-        # Initialize
+        #Initialize
         if iter == 0:
             error = np.array(y.copy()).reshape(len(y),1)
             theta = np.zeros(na+nb).reshape((na+nb),1)
