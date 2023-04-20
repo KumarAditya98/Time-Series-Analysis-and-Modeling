@@ -19,11 +19,12 @@ def gen_e(num,den,y):
     t, e = signal.dlsim(system,y)
     return e
 
-# Code for parameter estimation through Levenber-Marqardt optimization.
+
+# Q1. Code for parameter estimation through Levenberg-Marquardt optimization. - Along with process generation.
 def lm_param_estimate():
     """
-    Includes ARMA (synthetic process generation)
-    The attempts to estimate the tre coefficients of process through LM Algo
+    Includes ARMA (synthetic process) generation. - Used for testing.
+    Then attempts to estimate the true coefficients of process through LM Algo.
     :return: None. Only prints in case of convergence or any error.
     """
     np.random.seed(6313)
@@ -58,7 +59,8 @@ def lm_param_estimate():
     delta = 1e-6
     mu = 0.01
     mu_max = 1e10
-    epsilon = 0.001
+    epsilon = 0.0001
+    sse_plot = []
     iter = 0
     while iter < max_iter:
         #Initialize
@@ -72,6 +74,7 @@ def lm_param_estimate():
             den[:nb] = theta.ravel().tolist()[na:]
             error = gen_e(num,den,y)
         sse = np.dot(error.T, error)
+        sse_plot.append(sse)
         big_x = np.empty(len(y)*(na+nb)).reshape(len(y),(na+nb))
         for i in range(len(theta)):
             theta_temp = theta.copy()
@@ -116,10 +119,18 @@ def lm_param_estimate():
                     print(f"Confidence interval for MA parameters are:")
                 for i in range(len(den)):
                     print(f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-                if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
                 if nb != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+                if na != 0:
                     print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
+                fig, ax = plt.subplots(figsize=(14,8))
+                ax.plot(np.arange(len(sse_plot),dtype='int').tolist(),np.array(sse_plot).ravel(),label='Sum Square Error')
+                plt.grid()
+                plt.title("The Sum Square Error V/S Number of Iterations")
+                plt.xlabel("Number of Iterations")
+                plt.ylabel("Sum Square Error")
+                plt.legend()
+                plt.show()
                 return None
             else:
                 theta = theta_new.copy()
@@ -150,9 +161,9 @@ def lm_param_estimate():
                 for i in range(len(den)):
                     print(
                         f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-                if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
                 if nb != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
+                if na != 0:
                     print(f"The roots of the denominator are: {np.roots(np.r_[1, num].tolist())}")
                 return None
             delta_theta = np.dot(np.linalg.inv((hessian + mu * identity)), gradient)
@@ -189,14 +200,12 @@ def lm_param_estimate():
             for i in range(len(den)):
                 print(
                     f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-            if na != 0:
-                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
             if nb != 0:
+                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+            if na != 0:
                 print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
             return None
         theta = theta_new.copy()
 
-
-na, nb, y = ARMA_process()
-lm_param_estimate(y,na,nb)
+lm_param_estimate()
 
