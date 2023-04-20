@@ -210,5 +210,158 @@ def ACF_PACF_Plot(y,lags):
     fig.tight_layout(pad=3)
     plt.show()
 
+def gen_e(num,den,y):
+    """
+    :param num: The denominator to generate error from process
+    :param den: The numerator to generate error from process
+    :return: error process
+    """
+    np.random.seed(6313)
+    num_e = np.r_[1,num].tolist()
+    den_e = np.r_[1,den].tolist()
+    system = (num_e, den_e, 1)
+    t, e = signal.dlsim(system,y)
+    return e
+
+def lm_param_estimate(y,na,nb):
+    np.random.seed(6313)
+    max_iter = 100
+    delta = 1e-6
+    mu = 0.01
+    mu_max = 1e10
+    epsilon = 0.001
+    iter = 0
+    while iter < max_iter:
+        #Initialize
+        if iter == 0:
+            error = np.array(y.copy()).reshape(len(y),1)
+            theta = np.zeros(na+nb).reshape((na+nb),1)
+        else:
+            num = [0]*max(na,nb)
+            den = [0]*max(na,nb)
+            num[:na] = theta.ravel().tolist()[:na]
+            den[:nb] = theta.ravel().tolist()[na:]
+            error = gen_e(num,den,y)
+        sse = np.dot(error.T, error)
+        big_x = np.empty(len(y)*(na+nb)).reshape(len(y),(na+nb))
+        for i in range(len(theta)):
+            theta_temp = theta.copy()
+            theta_temp[i] = theta_temp[i] + delta
+            num = [0]*max(na,nb)
+            den = [0]*max(na,nb)
+            num[:na] = theta_temp.ravel().tolist()[:na]
+            den[:nb] = theta_temp.ravel().tolist()[na:]
+            error_temp = gen_e(num,den,y)
+            big_x[:,i] = (error.ravel() - error_temp.ravel())/delta
+        hessian = np.dot(big_x.T,big_x)
+        gradient = np.dot(big_x.T,error.reshape(len(y),1))
+        identity = np.identity((na+nb))
+        delta_theta = np.dot(np.linalg.inv((hessian+mu*identity)),gradient)
+        theta_new = theta + delta_theta
+        num = [0] * max(na, nb)
+        den = [0] * max(na, nb)
+        num[:na] = theta_new.ravel().tolist()[:na]
+        den[:nb] = theta_new.ravel().tolist()[na:]
+        error_new = gen_e(num, den, y)
+        sse_new = np.dot(error_new.T,error_new)
+        if sse_new < sse:
+            if np.linalg.norm(delta_theta) < epsilon:
+                theta = theta_new.copy()
+                var_e = sse_new/(len(y)-(na+nb))
+                covariance = var_e*np.linalg.inv(hessian)
+                print("Algorithm has converged!!!")
+                print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+                print(f"The Covariance matrix is: {covariance}")
+                print(f"The Variance of error is: {var_e.ravel()[0]}")
+                num = theta.ravel().tolist()[:na]
+                den = theta.ravel().tolist()[na:]
+                temp = np.diag(covariance).tolist()
+                num_temp = temp[:na]
+                den_temp = temp[na:]
+                if na != 0:
+                    print(f"Confidence interval for AR parameters are:")
+                for i in range(len(num)):
+                    print(f"{num[i]-2*np.sqrt(num_temp[i])} < a{format(i+1)} < {num[i]+2*np.sqrt(num_temp[i])}")
+                if nb != 0:
+                    print(f"Confidence interval for MA parameters are:")
+                for i in range(len(den)):
+                    print(f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
+                if na != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+                if nb != 0:
+                    print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
+                return None
+            else:
+                theta = theta_new.copy()
+                mu = mu/10
+        while sse_new >= sse:
+            mu = mu*10
+            if mu > mu_max:
+                print(f"Error: Value of mu has become too large. Algorithm will become unstable if we proceed further.\t Printing Results:")
+                theta = theta_new.copy()
+                var_e = sse_new / (len(y) - (na + nb))
+                covariance = var_e * np.linalg.inv(hessian)
+                print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+                print(f"The Covariance matrix is: {covariance}")
+                print(f"The Variance of error is: {var_e.ravel()[0]}")
+                num = theta.ravel().tolist()[:na]
+                den = theta.ravel().tolist()[na:]
+                temp = np.diag(covariance).tolist()
+                num_temp = temp[:na]
+                den_temp = temp[na:]
+                if na != 0:
+                    print(f"Confidence interval for AR parameters are:")
+                for i in range(len(num)):
+                    print(
+                        f"{num[i] - 2 * np.sqrt(num_temp[i])} < a{format(i + 1)} < {num[i] + 2 * np.sqrt(num_temp[i])}")
+                if nb != 0:
+                    print(f"Confidence interval for MA parameters are:")
+                for i in range(len(den)):
+                    print(
+                        f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
+                if na != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
+                if nb != 0:
+                    print(f"The roots of the denominator are: {np.roots(np.r_[1, num].tolist())}")
+                return None
+            delta_theta = np.dot(np.linalg.inv((hessian + mu * identity)), gradient)
+            theta_new = theta + delta_theta
+            num = [0] * max(na, nb)
+            den = [0] * max(na, nb)
+            num[:na] = theta_new.ravel().tolist()[:na]
+            den[:nb] = theta_new.ravel().tolist()[na:]
+            error_new = gen_e(num, den, y)
+            sse_new = np.dot(error_new.T, error_new)
+        iter = iter+1
+        if iter > max_iter:
+            print(
+                f"Error: Value of iterations have become too large. Algorithm should've converged by now. Error in code logic.\t Printing Results:")
+            theta = theta_new.copy()
+            var_e = sse_new / (len(y) - (na + nb))
+            covariance = var_e * np.linalg.inv(hessian)
+            print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+            print(f"The Covariance matrix is: {covariance}")
+            print(f"The Variance of error is: {var_e.ravel()[0]}")
+            num = theta.ravel().tolist()[:na]
+            den = theta.ravel().tolist()[na:]
+            temp = np.diag(covariance).tolist()
+            num_temp = temp[:na]
+            den_temp = temp[na:]
+            if na != 0:
+                print(f"Confidence interval for AR parameters are:")
+            for i in range(len(num)):
+                print(
+                    f"{num[i] - 2 * np.sqrt(num_temp[i])} < a{format(i + 1)} < {num[i] + 2 * np.sqrt(num_temp[i])}")
+            if nb != 0:
+                print(f"Confidence interval for MA parameters are:")
+            for i in range(len(den)):
+                print(
+                    f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
+            if na != 0:
+                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+            if nb != 0:
+                print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
+            return None
+        theta = theta_new.copy()
 
 
