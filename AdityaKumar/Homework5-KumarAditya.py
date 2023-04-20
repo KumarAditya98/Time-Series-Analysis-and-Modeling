@@ -124,8 +124,10 @@ def lm_param_estimate():
                 if na != 0:
                     print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
                 fig, ax = plt.subplots(figsize=(14,8))
-                ax.plot(np.arange(len(sse_plot),dtype='int').tolist(),np.array(sse_plot).ravel(),label='Sum Square Error')
+                x = np.arange(len(sse_plot)).tolist()
+                ax.plot(x,np.array(sse_plot).ravel(),label='Sum Square Error')
                 plt.grid()
+                plt.xticks(np.arange(min(x),max(x)+1,1))
                 plt.title("The Sum Square Error V/S Number of Iterations")
                 plt.xlabel("Number of Iterations")
                 plt.ylabel("Sum Square Error")
@@ -207,5 +209,27 @@ def lm_param_estimate():
             return None
         theta = theta_new.copy()
 
+# Example 1: y(t) - 0.5y(t-1) = e(t)
+lm_param_estimate()
+
+# Example 2: ARMA (0,1): y(t) = e(t) + 0.5e(t 1)
+lm_param_estimate()
+
+# Example 3: ARMA (1,1): y(t) + 0.5y(t 1) = e(t) + 0. 2 5e(t 1)
+lm_param_estimate()
+
+# Example 4: ARMA (2,0): y(t) + 0.5y(t 1) + 0.2y(t 2) = e(t)
+lm_param_estimate()
+
+# Example 5: ARMA (2,1): y(t) + 0.5y(t 1) + 0.2y(t 2) = e(t) - 0.5e(t-1)
+lm_param_estimate()
+
+# Example 6: ARMA (1,2): y(t) + 0.5y(t 1) = e(t) + 0.5e(t 1) - 0.4e(t 2)
+lm_param_estimate()
+
+# Example 7: ARMA (0,2): y(t) = e(t) + 0.5e(t 1) - 0.4e(t-2)
+lm_param_estimate()
+
+# Example 8: ARMA (2,2): y(t)+0.5y(t 1) +0.2y(t 2) = e(t)+0.5e(t 1)-0.4e(t 2)
 lm_param_estimate()
 
