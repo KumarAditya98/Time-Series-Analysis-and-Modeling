@@ -4,36 +4,6 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from scipy import signal
 
-# Code for generating process
-def ARMA_process():
-    np.random.seed(6313)
-    N = int(input("Enter the number of data samples:"))
-    mean_e = int(input("Enter the mean of white noise:"))
-    var_e = int(input("Enter the variance of white noise:"))
-    ar_order = int(input("Enter the AR portion order:"))
-    ma_order = int(input("Enter the MA portion order:"))
-    if ar_order == 0 and ma_order == 0:
-        print("This is just a white noise. Run program again.")
-        return None
-    print('Enter the respective coefficients in the form:\n[y(t) + a1*y(t-1)) + a2*y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
-    ar_coeff = []
-    for i in range(ar_order):
-        prompt = "Enter the coefficient for a" + str((i+1))
-        ar_coeff.append(float(input(prompt)))
-    ma_coeff = []
-    for i in range(ma_order):
-        prompt = "Enter the coefficient for b" + str((i+1))
-        ma_coeff.append(float(input(prompt)))
-    ar = np.r_[1,ar_coeff]
-    ma = np.r_[1,ma_coeff]
-    arma_process = sm.tsa.ArmaProcess(ar, ma)
-    mean_y = mean_e*(1+np.sum(ma_coeff))/(1+np.sum(ar_coeff))
-    y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_y
-    if arma_process.isstationary:
-        print('Process with given coefficients is Stationary.\n')
-    else:
-        print('Process with given coefficients is Non-Stationary.\n')
-    return ar_order, ma_order, y
 
 # Creating function to generate error
 def gen_e(num,den,y):
@@ -49,8 +19,41 @@ def gen_e(num,den,y):
     t, e = signal.dlsim(system,y)
     return e
 
-def lm_param_estimate(y,na,nb):
+# Code for parameter estimation through Levenber-Marqardt optimization.
+def lm_param_estimate():
+    """
+    Includes ARMA (synthetic process generation)
+    The attempts to estimate the tre coefficients of process through LM Algo
+    :return: None. Only prints in case of convergence or any error.
+    """
     np.random.seed(6313)
+    N = int(input("Enter the number of data samples:"))
+    mean_e = int(input("Enter the mean of white noise:"))
+    var_e = int(input("Enter the variance of white noise:"))
+    na = int(input("Enter the AR portion order:"))
+    nb = int(input("Enter the MA portion order:"))
+    if na == 0 and nb == 0:
+        print("This is just a white noise. Run program again.")
+        return None
+    print(
+        'Enter the respective coefficients in the form:\n[y(t) + a1*y(t-1)) + a2*y(t-2) + ... = e (t) + b1*e(t-1) + b2*e(t-2) + ...]\n')
+    ar_coeff = []
+    for i in range(na):
+        prompt = "Enter the coefficient for a" + str((i + 1))
+        ar_coeff.append(float(input(prompt)))
+    ma_coeff = []
+    for i in range(nb):
+        prompt = "Enter the coefficient for b" + str((i + 1))
+        ma_coeff.append(float(input(prompt)))
+    ar = np.r_[1, ar_coeff]
+    ma = np.r_[1, ma_coeff]
+    arma_process = sm.tsa.ArmaProcess(ar, ma)
+    mean_y = mean_e * (1 + np.sum(ma_coeff)) / (1 + np.sum(ar_coeff))
+    y = arma_process.generate_sample(N, scale=np.sqrt(var_e)) + mean_y
+    if arma_process.isstationary:
+        print('Process with given coefficients is Stationary.\n')
+    else:
+        print('Process with given coefficients is Non-Stationary.\n')
     max_iter = 100
     delta = 1e-6
     mu = 0.01
@@ -97,6 +100,7 @@ def lm_param_estimate(y,na,nb):
                 covariance = var_e*np.linalg.inv(hessian)
                 print("Algorithm has converged!!!")
                 print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+                print(f"The True Parameters are: {ar_coeff+ma_coeff}")
                 print(f"The Covariance matrix is: {covariance}")
                 print(f"The Variance of error is: {var_e.ravel()[0]}")
                 num = theta.ravel().tolist()[:na]
@@ -128,6 +132,7 @@ def lm_param_estimate(y,na,nb):
                 var_e = sse_new / (len(y) - (na + nb))
                 covariance = var_e * np.linalg.inv(hessian)
                 print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+                print(f"The True Parameters are: {ar_coeff + ma_coeff}")
                 print(f"The Covariance matrix is: {covariance}")
                 print(f"The Variance of error is: {var_e.ravel()[0]}")
                 num = theta.ravel().tolist()[:na]
@@ -166,6 +171,7 @@ def lm_param_estimate(y,na,nb):
             var_e = sse_new / (len(y) - (na + nb))
             covariance = var_e * np.linalg.inv(hessian)
             print(f"The Estimated Parameters are: {theta.ravel().tolist()}")
+            print(f"The True Parameters are: {ar_coeff + ma_coeff}")
             print(f"The Covariance matrix is: {covariance}")
             print(f"The Variance of error is: {var_e.ravel()[0]}")
             num = theta.ravel().tolist()[:na]
@@ -189,6 +195,7 @@ def lm_param_estimate(y,na,nb):
                 print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
             return None
         theta = theta_new.copy()
+
 
 na, nb, y = ARMA_process()
 lm_param_estimate(y,na,nb)
