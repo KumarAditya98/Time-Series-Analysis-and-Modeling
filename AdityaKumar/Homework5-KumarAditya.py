@@ -113,9 +113,9 @@ def lm_param_estimate(y,na,nb):
                 for i in range(len(den)):
                     print(f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
                 if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1,num].tolist())}")
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
                 if nb != 0:
-                    print(f"The roots of the denominator are: {np.roots(np.r_[1,den].tolist())}")
+                    print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
                 return None
             else:
                 theta = theta_new.copy()
@@ -146,13 +146,18 @@ def lm_param_estimate(y,na,nb):
                     print(
                         f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
                 if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1, num].tolist())}")
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
                 if nb != 0:
-                    print(f"The roots of the denominator are: {np.roots(np.r_[1, den].tolist())}")
+                    print(f"The roots of the denominator are: {np.roots(np.r_[1, num].tolist())}")
                 return None
             delta_theta = np.dot(np.linalg.inv((hessian + mu * identity)), gradient)
             theta_new = theta + delta_theta
-            sse_new = np.dot(theta_new.T, theta_new)
+            num = [0] * max(na, nb)
+            den = [0] * max(na, nb)
+            num[:na] = theta_new.ravel().tolist()[:na]
+            den[:nb] = theta_new.ravel().tolist()[na:]
+            error_new = gen_e(num, den, y)
+            sse_new = np.dot(error_new.T, error_new)
         iter = iter+1
         if iter > max_iter:
             print(
@@ -179,9 +184,9 @@ def lm_param_estimate(y,na,nb):
                 print(
                     f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
             if na != 0:
-                print(f"The roots of the numerator are: {np.roots(np.r_[1, num].tolist())}")
+                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
             if nb != 0:
-                print(f"The roots of the denominator are: {np.roots(np.r_[1, den].tolist())}")
+                print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
             return None
         theta = theta_new.copy()
 
