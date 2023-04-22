@@ -1,10 +1,10 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from scipy import signal
 
-
+# -------------------------------------x----------------------------------------
+# Phase I
 # Creating function to generate error
 def gen_e(num,den,y):
     """
@@ -18,7 +18,6 @@ def gen_e(num,den,y):
     system = (num_e, den_e, 1)
     t, e = signal.dlsim(system,y)
     return e
-
 
 # Q1. Code for parameter estimation through Levenberg-Marquardt optimization. - Along with process generation.
 def lm_param_estimate():
@@ -233,3 +232,181 @@ lm_param_estimate()
 # Example 8: ARMA (2,2): y(t)+0.5y(t 1) +0.2y(t 2) = e(t)+0.5e(t 1)-0.4e(t 2)
 lm_param_estimate()
 
+# -----------------------------x-------------------------------------
+# Phase II
+N = 5000
+# Example 1: y(t) - 0.5y(t) = e(t)
+np.random.seed(6313)
+arparams = np.array([-0.5])
+maparams = np.array([])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y1 = arma_process.generate_sample(N)
+
+model1 = sm.tsa.arima.ARIMA(y1,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model1.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model1.params[na+i-1:-1]:.3f}")
+model1.summary()
+
+# Example 2: ARMA (0,1): y(t) = e(t) + 0.5e(t-1)
+np.random.seed(6313)
+arparams = np.array([])
+maparams = np.array([0.5])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y2 = arma_process.generate_sample(N)
+
+model2 = sm.tsa.arima.ARIMA(y2,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model2.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model2.params[na+i-1]:.3f}")
+model2.summary()
+
+# Example 3: ARMA (1,1): y(t) + 0.5y(t 1) = e(t) + 0.25e(t-1)
+np.random.seed(6313)
+arparams = np.array([0.5])
+maparams = np.array([0.25])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y3 = arma_process.generate_sample(N)
+
+model3 = sm.tsa.arima.ARIMA(y3,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model3.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model3.params[na+i-1]:.3f}")
+model3.summary()
+
+# Example 4: ARMA (2,0): y(t) + 0.5y(t-1) + 0.2y(t-2) = e(t)
+np.random.seed(6313)
+arparams = np.array([0.5,0.2])
+maparams = np.array([])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y4 = arma_process.generate_sample(N)
+
+model4 = sm.tsa.arima.ARIMA(y4,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model4.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model4.params[na+i-1]:.3f}")
+model4.summary()
+
+# Example 5: ARMA (2,1): y(t) + 0.5y(t-1) + 0.2y(t-2) = e(t) - 0.5e(t-1)
+np.random.seed(6313)
+arparams = np.array([0.5,0.2])
+maparams = np.array([-0.5])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y5 = arma_process.generate_sample(N)
+
+model5 = sm.tsa.arima.ARIMA(y5,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model5.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model5.params[na+i-1]:.3f}")
+model5.summary()
+
+# Example 6: ARMA (1,2): y(t) + 0.5y(t-1) = e(t) + 0.5e(t-1) - 0.4e(t-2)
+np.random.seed(6313)
+arparams = np.array([0.5])
+maparams = np.array([0.5,-0.4])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y6 = arma_process.generate_sample(N)
+
+model6 = sm.tsa.arima.ARIMA(y6,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model6.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model6.params[na+i-1]:.3f}")
+model6.summary()
+
+# Example 7: ARMA (0,2): y(t) = e(t) + 0.5e(t-1)-0.4e(t-2)
+np.random.seed(6313)
+arparams = np.array([])
+maparams = np.array([0.5,-0.4])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y7 = arma_process.generate_sample(N)
+
+model7 = sm.tsa.arima.ARIMA(y7,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model7.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model7.params[na+i-1]:.3f}")
+model7.summary()
+
+# Example 8: ARMA (2,2): y(t)+0.5y(t-1) +0.2y(t-2) = e(t)+0.5e(t-1)-0.4e(t-2)
+np.random.seed(6313)
+arparams = np.array([0.5,0.2])
+maparams = np.array([0.5,-0.4])
+
+na = len(arparams)
+nb = len(maparams)
+ar = np.r_[1,arparams]
+ma = np.r_[1,maparams]
+
+arma_process = sm.tsa.ArmaProcess(ar,ma)
+print(f"Is this process stationary: {arma_process.isstationary}")
+
+y8 = arma_process.generate_sample(N)
+
+model8 = sm.tsa.arima.ARIMA(y8,order=(na,0,nb),trend='n').fit()
+for i in range(1, na+1):
+    print(f"The AR coefficient a{i} is {model8.params[i-1]:.3f}")
+for i in range(1, nb+1):
+    print(f"The MA coefficient b{i} is {model8.params[na+i-1]:.3f}")
+model8.summary()
