@@ -168,52 +168,50 @@ from keras.optimizers import RMSprop
 from keras import backend as K
 from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier
-def recall_m(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    recall = true_positives / (possible_positives + K.epsilon())
-    return recall
-def precision_m(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
-def f1_m(y_true, y_pred):
-    precision = precision_m(y_true, y_pred)
-    recall = recall_m(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
-def create_model(optimizer='adam', init='glorot_uniform'):
-    # create model
-    model = Sequential()
-    model.add(Dense(512, input_dim=28, kernel_initializer=init, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(512, kernel_initializer=init, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(1, kernel_initializer=init, activation='softmax'))
+
+model = Sequential()
+model.add(Dense(512, input_dim=28, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(1, activation='softmax'))
     # Compile model
-    model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy',f1_m,precision_m, recall_m])
-    return model
-
-model = KerasClassifier(model=create_model, verbose=0)
-print(model.get_params().keys())
-optimizers = ['rmsprop', 'adam','AdaDelta']
-init = ['glorot_uniform', 'normal', 'uniform']
-epochs = [50, 100, 150]
-batches = [32,64,128]
-param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches, model__init=init)
-grid = GridSearchCV(estimator=model, param_grid=param_grid)
-grid_result = grid.fit(scaled_xtrain, y_trainn)
-# summarize results
-print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-means = grid_result.cv_results_['mean_test_score']
-stds = grid_result.cv_results_['std_test_score']
-params = grid_result.cv_results_['params']
-for mean, stdev, param in zip(means, stds, params):
-    print("%f (%f) with: %r" % (mean, stdev, param))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 class_weight = {0: 6,1: 1.} # for imbalanced data handling
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
+
+My_model = model.fit(scaled_xtrain, y_trainn, batch_size = 32,validation_data=(scaled_xval, y_val), epochs=4000, verbose=1, callbacks=[es],class_weight=class_weight)
+
+test = pd.read_csv('Test_submission_netid_Ver_X.csv')
+test.drop(columns="Junction_Detail",axis=1,inplace=True)
+test['Date'] = pd.to_datetime(raw_data1['Date'],dayfirst=True)
+# Splitting date into multiple features
+test['Month'] = raw_data1.Date.dt.month
+test['Day'] = raw_data1.Date.dt.day
+# Don't need date column anymore
+test.drop(columns="Date",axis=1,inplace=True)
+# I'll drop time column as well as i don't have time to feature engineer it
+test.drop(columns="Time",axis=1,inplace=True)
+from sklearn.impute import SimpleImputer
+mode_imputer = SimpleImputer(strategy='most_frequent')
+mode_imputer.fit(X_train[['Junction_Control']])
+test[['Junction_Control']] = mode_imputer.transform(
+      test[['Junction_Control']])
+objList = test.select_dtypes(include = "object").columns
+print (objList)
+from sklearn import preprocessing
+le = preprocessing.LabelEncoder()
+for feat in objList:
+       test[feat] = le.fit_transform(test[feat].astype(str))
+test.drop(columns=['Local_Authority_(District)','Longitude','Latitude'],axis=1,inplace=True)
+My_model.predict(test)
+
+# wasn't able to train model. hence cannot give output file.
+# However, everything is ready in the python file
+
+
 
 
 # References:
