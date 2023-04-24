@@ -33,7 +33,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.75)
 # Standard Scaler
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
-scaled_xtrain = scaler.fit_transform(X_train)
+scaler.fit(X_train)
+scaled_xtrain = scaler.transform(X_train)
 scaled_xtest = scaler.transform(X_test)
 #.clip after this
 #----------------------------------------------
