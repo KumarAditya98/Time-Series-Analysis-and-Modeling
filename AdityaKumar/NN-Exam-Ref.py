@@ -6,8 +6,6 @@ Q2 = df['ph'].quantile(0.95)
 df['ph'] = df['ph'].clip(lower = Q1, upper = Q2)
 
 # 3.
-
-
 #---------------------------------------
 # Step - Check for feature multi collineairy - VIF correlation - to be done after standardscaler.
 from statsmodels.stats.outliers_influence import variance_inflation_factor

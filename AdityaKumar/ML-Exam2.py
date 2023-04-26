@@ -213,7 +213,6 @@ My_model.predict(test)
 
 
 
-
 # References:
 # https://machinelearningmastery.com/use-keras-deep-learning-models-scikit-learn-python/
 # https://www.tensorflow.org/tutorials/structured_data/imbalanced_data#define_the_model_and_metrics
