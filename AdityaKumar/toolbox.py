@@ -6,6 +6,7 @@ from statsmodels.tsa.stattools import kpss
 import statsmodels.api as sm
 import seaborn as sns
 from statsmodels.graphics.tsaplots import plot_acf , plot_pacf
+from scipy import signal
 
 def Cal_rolling_mean_var(x):
     rMean = []
