@@ -287,9 +287,9 @@ def lm_param_estimate(y,na,nb):
                     print(f"Confidence interval for MA parameters are:")
                 for i in range(len(den)):
                     print(f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-                if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
                 if nb != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+                if na != 0:
                     print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
                 return None
             else:
@@ -320,9 +320,9 @@ def lm_param_estimate(y,na,nb):
                 for i in range(len(den)):
                     print(
                         f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-                if na != 0:
-                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
                 if nb != 0:
+                    print(f"The roots of the numerator are: {np.roots(np.r_[1, den].tolist())}")
+                if na != 0:
                     print(f"The roots of the denominator are: {np.roots(np.r_[1, num].tolist())}")
                 return None
             delta_theta = np.dot(np.linalg.inv((hessian + mu * identity)), gradient)
@@ -358,9 +358,9 @@ def lm_param_estimate(y,na,nb):
             for i in range(len(den)):
                 print(
                     f"{den[i] - 2 * np.sqrt(den_temp[i])} < b{format(i + 1)} < {den[i] + 2 * np.sqrt(den_temp[i])}")
-            if na != 0:
-                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
             if nb != 0:
+                print(f"The roots of the numerator are: {np.roots(np.r_[1,den].tolist())}")
+            if na != 0:
                 print(f"The roots of the denominator are: {np.roots(np.r_[1,num].tolist())}")
             return None
         theta = theta_new.copy()
