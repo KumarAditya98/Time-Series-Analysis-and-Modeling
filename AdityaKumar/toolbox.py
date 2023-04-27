@@ -224,6 +224,63 @@ def gen_e(num,den,y):
     t, e = signal.dlsim(system,y)
     return e
 
+def avg_forecast_train(x):
+    new = []
+    for i in range(1,len(x)):
+        new.append(np.mean(x[0:i]))
+    return new
+
+def autocorrelation(array,lag):
+    mean = np.mean(array)
+    denominator = 0
+    for x in range(len(array)):
+        denominator = (array[x] - mean)**2 + denominator
+    ry = []
+    for tau in range(lag+1):
+        numerator = 0
+        for t in range(tau,len(array)):
+            numerator = (array[t]-mean)*(array[t-tau]-mean) + numerator
+        val = numerator/denominator
+        ry.append(val)
+        ryy = ry[::-1]
+        Ry = ryy + ry[1:]
+    return Ry
+
+def q_val(array,T,h):
+    val = 0
+    for i in range(1,h+1):
+        val = array[i]**2 + val
+    q = T*val
+    return q
+
+def naive_forecast_train(x):
+    new = []
+    for i in range(len(x)-1):
+        new.append(x[i])
+    return new
+
+def drift_forecast_train(x):
+    new = []
+    for i in range(1,len(x)-1):
+        new.append((x[i]+((x[i]-x[0])/(i))))
+    return new
+
+def drift_forecast_test(x_train,h):
+    new = []
+    for i in range(1,h+1):
+        new.append((x_train[-1]+i*((x_train[-1]-x_train[0])/(len(x_train)-1))))
+    return new
+
+def SES_forecast_train(x,alpha,ic):
+    new = [ic]
+    for i in range(len(x)-1):
+        new.append((alpha*x[i]+(1-alpha)*new[i]))
+    return new
+
+def SES_forecast_test(x_train,x_predicted,alpha):
+    new = alpha*x_train[-1] + (1-alpha)*x_predicted[-1]
+    return new
+
 def lm_param_estimate(y,na,nb):
     np.random.seed(6313)
     max_iter = 100
@@ -541,4 +598,37 @@ def lm_param_estimate(y,na,nb):
 #             return None
 #         theta = theta_new.copy()
 #
+
+def AR_process_check():
+    N = int(input("Enter number of samples:"))
+    na = int(input("Enter the order of the AR process:"))
+    if na == 0:
+        print('This is just a white noise. Run program again.')
+        return None
+    input_string = input('Enter same number of coefficients as desired order separated by space, in the format [y(t) + a1.y(t-1)) + a2.y(t-2) + ... + = e (t)')
+    True_coeff = input_string.split()
+    if len(True_coeff) != na:
+        print("Incorrect number of coefficients entered, run function again")
+        return None
+    for i in range(len(True_coeff)):
+        # convert each item to int type
+        True_coeff[i] = float(True_coeff[i])
+    np.random.seed(6313)
+    e = np.random.normal(0,1,N)
+    num = [0 for i in range(na)]
+    num.insert(0,1)
+    den = True_coeff.copy()
+    den.insert(0,1)
+    system = (num, den, 1)
+    _, y = signal.dlsim(system, e)
+    T = len(y) - na - 1
+    y = [round(i, 2) for i in list(y.reshape(len(y)))]
+    X_mat = np.empty((T+1,0))
+    for i in reversed(range(0,na)):
+        X = np.array([-y[j] for j in range(i, i + T+1)]).reshape(T+1, 1)
+        X_mat = np.hstack((X_mat,X))
+    Y_mat = np.array([y[i] for i in range(na, na + T+1)]).reshape(T+1, 1)
+    beta_hat = np.dot(la.inv(np.dot(X_mat.T, X_mat)), np.dot(X_mat.T, Y_mat))
+    print(f"The Estimated Coefficients from the Normal equation in the order [a1, a2, ...] are: {np.round(beta_hat.reshape(na), 2)}")
+    print(f"Whereas the True Coefficients that were supplied to the process are, same order: {True_coeff}")
 
