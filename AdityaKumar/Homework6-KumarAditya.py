@@ -6,19 +6,24 @@ import matplotlib.pyplot as plt
 # Q1.
 df = pd.read_csv('https://raw.githubusercontent.com/rjafari979/Information-Visualization-Data-Analytics-Dataset-/main/WA_Fn-UseC_-Telco-Customer-Churn.csv')
 
-print(f"The first 5 rows of the dataset are as follows:\n{df.head().to_string()}")
-print(df.info())
-print(df.describe())
+print(f"The first 5 rows of the dataset are as follows:\n{df.head()}")
+print("Dataset info:",df.info())
+print(df.describe(include='all'))
 #3 numerical columns
 print(df.shape)
-# df[:5].plot()
-# plt.show()
+df[:5].plot()
+plt.title('First 5 rows of numerical columns in the dataset')
+plt.xlabel('Row number')
+plt.ylabel('Data')
+plt.legend()
+plt.grid()
+plt.show()
 
 print(f"Numerical features are: {df.select_dtypes(include=['int','float']).columns.values}")
 print(f"Categorical features are: {df.select_dtypes(exclude=['int','float']).columns.values}")
 
 # Q2
-df["TotalCharges"] = df["TotalCharges"].astype(float)
+# df["TotalCharges"] = df["TotalCharges"].astype(float)
 # Error due to empty string
 df['TotalCharges'] = df['TotalCharges'].replace(' ', np.nan)
 df["TotalCharges"] = df["TotalCharges"].astype(float)
@@ -100,6 +105,11 @@ plt.show()
 # Q9
 df1 = pd.read_csv('https://raw.githubusercontent.com/rjafari979/Information-Visualization-Data-Analytics-Dataset-/main/dd.csv')
 
+# Checking for nulls incase any imputation is required
+df1.isnull().sum()
+
+# No imputation is required in columns of interest. Good to go.
+
 Asia = df1[df1['un_continent_name'] == 'Asia']
 Europe = df1[df1['un_continent_name'] == 'Europe']
 Africa = df1[df1['un_continent_name'] == 'Africa']
@@ -140,3 +150,52 @@ plt.suptitle("Survival Function for Political Regimes based on Regions")
 plt.xlabel("Time")
 plt.ylabel("Survival Function")
 plt.show()
+
+# Q10.
+regime1 = df1[df1['regime'] == 'Parliamentary Dem']
+regime3 = df1[df1['regime'] == 'Civilian Dict']
+regime4 = df1[df1['regime'] == 'Presidential Dem']
+regime5 = df1[df1['regime'] == 'Mixed Dem']
+regime6 = df1[df1['regime'] == 'Military Dict']
+regime7 = df1[df1['regime'] == 'Monarchy']
+
+durations1 = regime1['duration']
+event1 = regime1['observed']
+durations3 = regime3['duration']
+event3 = regime3['observed']
+durations4 = regime4['duration']
+event4 = regime4['observed']
+durations5 = regime5['duration']
+event5 = regime5['observed']
+durations6 = regime6['duration']
+event6 = regime6['observed']
+durations7 = regime7['duration']
+event7 = regime7['observed']
+
+km1 = KaplanMeierFitter()
+km3 = KaplanMeierFitter()
+km4 = KaplanMeierFitter()
+km5 = KaplanMeierFitter()
+km6 = KaplanMeierFitter()
+km7 = KaplanMeierFitter()
+
+km1.fit(durations1,event1, label = 'Parliamentary Dem')
+km3.fit(durations3,event3, label = 'Civilian Dict')
+km4.fit(durations4,event4, label = 'Presidential Dem')
+km5.fit(durations5,event5, label = 'Mixed Dem')
+km6.fit(durations6,event6, label = 'Military Dict')
+km7.fit(durations7,event7, label = 'Monarchy')
+
+km1.plot_survival_function()
+km3.plot_survival_function()
+km4.plot_survival_function()
+km5.plot_survival_function()
+km6.plot_survival_function()
+km7.plot_survival_function()
+
+plt.grid()
+plt.suptitle("Survival Function based on Political Regimes")
+plt.xlabel("Time")
+plt.ylabel("Survival Function")
+plt.show()
+
