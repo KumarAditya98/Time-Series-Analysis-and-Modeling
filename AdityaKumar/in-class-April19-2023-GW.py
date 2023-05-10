@@ -14,8 +14,8 @@ import warnings
 warnings.filterwarnings("ignore")
 # import tensorflow as tf
 import tensorflow as tf
-physical_devices = tf.config.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+# physical_devices = tf.config.list_physical_devices('GPU')
+# tf.config.experimental.set_memory_growth(physical_devices[0], True)
 # tf.debugging.set_log_device_placement(True)
 CUDA_VISIBLE_DEVICES = '0,1'
 
@@ -76,13 +76,12 @@ plt.legend()
 plt.show()
 
 
-test_data = scaled_data[training_data_len-60 :,:  ]
+test_data = scaled_data[training_data_len-60:,:  ]
 x_test = []
 y_test = dataset[training_data_len:,-1]
 
 for i in range(60,len(test_data)):
     x_test.append(test_data[i-60:i,0:4])
-
 
 # Convert the data to a numpy array
 x_test = np.array(x_test)
